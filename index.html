@@ -1,414 +1,392 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Molho Mestre - Pedido Online</title>
-    <style>
-        :root {
-            --primary: #d32f2f;
-            --secondary: #27ae60;
-            --bg: #f4f6f8;
-            --card: #ffffff;
-            --text: #2c3e50;
-            --border: #e0e0e0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Molho Mestre - Pedido Online</title>
 
-        body.dark-mode {
-            --bg: #121212;
-            --card: #1e1e1e;
-            --text: #e0e0e0;
-            --border: #333;
-        }
+<style>
+:root {
+    --primary: #d32f2f;
+    --secondary: #27ae60;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #2c3e50;
+    --border: #e0e0e0;
+}
+body.dark-mode {
+    --bg: #121212;
+    --card: #1e1e1e;
+    --text: #e0e0e0;
+    --border: #333;
+}
+* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: .2s; }
+body { margin:0; background:var(--bg); color:var(--text); padding-bottom:90px; }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: all 0.2s; }
-        body { background: var(--bg); margin: 0; color: var(--text); padding-bottom: 80px; }
+header {
+    background: linear-gradient(135deg, var(--primary), #b71c1c);
+    padding:20px;
+    text-align:center;
+    color:#fff;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+.logo { margin:0; font-weight:900; }
+.theme-btn {
+    position:absolute;
+    right:15px;
+    top:20px;
+    background:rgba(255,255,255,.2);
+    border:none;
+    color:#fff;
+    padding:5px 10px;
+    border-radius:15px;
+    cursor:pointer;
+}
 
-        /* HEADER */
-        header {
-            background: linear-gradient(135deg, var(--primary), #b71c1c);
-            padding: 20px; text-align: center; color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            position: sticky; top: 0; z-index: 100;
-        }
-        .logo { margin: 0; font-size: 1.5rem; text-transform: uppercase; font-weight: 900; }
-        .theme-btn { 
-            position: absolute; right: 15px; top: 20px; background: rgba(255,255,255,0.2); 
-            border: none; color: white; padding: 5px 10px; border-radius: 15px; cursor: pointer; 
-        }
+.progress-container {
+    display:flex;
+    justify-content:space-between;
+    padding:15px 20px;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
+}
+.step-dot {
+    width:12px;
+    height:12px;
+    background:var(--border);
+    border-radius:50%;
+}
+.step-dot.active { background:var(--primary); transform:scale(1.3); }
+.step-dot.finished { background:var(--secondary); }
 
-        /* PROGRESS BAR */
-        .progress-container {
-            display: flex; justify-content: space-between; padding: 15px 20px;
-            background: var(--card); border-bottom: 1px solid var(--border);
-        }
-        .step-dot {
-            width: 12px; height: 12px; background: var(--border); border-radius: 50%;
-        }
-        .step-dot.active { background: var(--primary); transform: scale(1.3); }
-        .step-dot.finished { background: var(--secondary); }
+.container { max-width:600px; margin:20px auto; padding:0 15px; }
+.step-content { display:none; animation:fadeIn .3s; }
+.step-content.active { display:block; }
 
-        /* CONTAINER */
-        .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
+h2 { border-left:5px solid var(--primary); padding-left:10px; }
 
-        /* STEPS (ABAS) */
-        .step-content { display: none; animation: fadeIn 0.4s; }
-        .step-content.active { display: block; }
+.option-card {
+    background:var(--card);
+    border:2px solid var(--border);
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:15px;
+    display:flex;
+    align-items:center;
+    cursor:pointer;
+}
+.option-card:hover { border-color:var(--primary); }
+.option-card input { margin-right:12px; transform:scale(1.3); }
 
-        /* CARDS E OPÇÕES */
-        h2 { border-left: 5px solid var(--primary); padding-left: 10px; font-size: 1.4rem; margin-bottom: 20px; }
-        
-        .option-card {
-            background: var(--card); border: 2px solid var(--border);
-            padding: 15px; border-radius: 12px; margin-bottom: 15px;
-            display: flex; align-items: center; cursor: pointer;
-        }
-        .option-card:hover { border-color: var(--primary); }
-        .option-card input { margin-right: 15px; transform: scale(1.3); accent-color: var(--primary); }
-        
-        /* BEBIDAS */
-        .drink-item {
-            background: var(--card); padding: 15px; border-radius: 12px;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 10px; border: 1px solid var(--border);
-        }
-        .drink-controls { display: flex; align-items: center; gap: 10px; }
-        .drink-btn { 
-            width: 30px; height: 30px; border-radius: 50%; border: none; 
-            background: var(--primary); color: white; font-weight: bold; cursor: pointer;
-        }
-        .drink-qty { font-weight: bold; font-size: 1.2rem; width: 25px; text-align: center; }
+.ing-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.ing-label {
+    background:var(--card);
+    padding:10px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    font-size:.9rem;
+    display: flex;
+    align-items: center;
+}
+.ing-label input { margin-right: 8px; }
 
-        /* GRID INGREDIENTES */
-        .ing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .ing-label {
-            background: var(--card); padding: 12px; border-radius: 8px; 
-            border: 1px solid var(--border); display: flex; align-items: center; font-size: 0.9rem;
-        }
-        .ing-label input { margin-right: 8px; accent-color: var(--secondary); }
+.drink-item {
+    background:var(--card);
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:10px;
+    border:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items: center;
+}
+.drink-controls { display:flex; gap:10px; align-items:center; }
+.drink-btn {
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    border:none;
+    background:var(--primary);
+    color:#fff;
+    cursor:pointer;
+}
 
-        /* RESUMO FINAL */
-        .summary-box { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
-        .summary-item { border-bottom: 1px solid var(--border); padding: 10px 0; }
-        .summary-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: var(--primary); }
-        .edit-btn { background: none; border: none; color: #666; cursor: pointer; text-decoration: underline; font-size: 0.8rem; }
-        .summary-details { font-size: 0.95rem; margin-top: 5px; color: var(--text); }
-        
-        .input-field {
-            width: 100%; padding: 12px; margin-top: 10px; border: 1px solid var(--border);
-            border-radius: 8px; background: var(--bg); color: var(--text);
-        }
+/* CORREÇÃO: Estilo do input que estava faltando */
+.input-field {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+}
+.input-field:focus { border-color: var(--primary); }
 
-        /* NAVEGAÇÃO RODAPÉ */
-        .footer-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: var(--card); padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.1); z-index: 200;
-        }
-        .btn {
-            padding: 12px 25px; border-radius: 30px; border: none;
-            font-weight: bold; cursor: pointer; font-size: 1rem;
-        }
-        .btn-back { background: #e0e0e0; color: #333; }
-        .btn-next { background: var(--primary); color: white; }
-        .btn-whatsapp { background: #25d366; color: white; width: 100%; display: none; }
+.footer-nav {
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:var(--card);
+    padding:15px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items: center;
+    box-shadow:0 -4px 15px rgba(0,0,0,.1);
+}
+.btn {
+    padding:12px 25px;
+    border-radius:30px;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
+}
+.btn-next { background:var(--primary); color:#fff; }
+.btn-back { background:#e0e0e0; }
+.btn-whatsapp { background:#25d366; color:#fff; display:none; width:100%; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+@keyframes fadeIn {
+    from { opacity:0; transform:translateY(10px); }
+    to { opacity:1; transform:translateY(0); }
+}
+</style>
 </head>
+
 <body>
 
-    <header>
-        <button class="theme-btn" onclick="toggleTheme()">🌗</button>
-        <h1 class="logo">Molho Mestre</h1>
-    </header>
+<header>
+    <button class="theme-btn" onclick="toggleTheme()">🌗</button>
+    <h1 class="logo">Molho Mestre</h1>
+</header>
 
-    <div class="progress-container">
-        <div class="step-dot active" id="dot-1"></div>
-        <div class="step-dot" id="dot-2"></div>
-        <div class="step-dot" id="dot-3"></div>
-        <div class="step-dot" id="dot-4"></div>
-        <div class="step-dot" id="dot-5"></div>
-        <div class="step-dot" id="dot-6"></div>
+<div class="progress-container">
+    <div class="step-dot active" id="dot-1"></div>
+    <div class="step-dot" id="dot-2"></div>
+    <div class="step-dot" id="dot-3"></div>
+    <div class="step-dot" id="dot-4"></div>
+    <div class="step-dot" id="dot-5"></div>
+    <div class="step-dot" id="dot-6"></div>
+</div>
+
+<form onsubmit="return false;">
+<main class="container">
+
+    <div class="step-content active" id="step-1">
+        <h2>1. Escolha o Tamanho</h2>
+        <label class="option-card">
+            <input type="radio" name="tamanho" value="25" data-name="Individual" checked onchange="updateTotal()">
+            <div><strong>Individual</strong><br>R$ 25,00</div>
+        </label>
+        <label class="option-card">
+            <input type="radio" name="tamanho" value="45" data-name="Para Dois" onchange="updateTotal()">
+            <div><strong>Para Dois</strong><br>R$ 45,00</div>
+        </label>
+        <label class="option-card" style="border-color: #f39c12;">
+            <input type="checkbox" id="gratinado" value="5" onchange="updateTotal()">
+            <div><strong>Gratinar com queijo</strong><br>+ R$ 5,00</div>
+        </label>
     </div>
 
-    <form id="orderForm" onsubmit="return false;">
-        <main class="container">
-            
-            <div class="step-content active" id="step-1">
-                <h2>1. Escolha o Tamanho</h2>
-                <label class="option-card">
-                    <input type="radio" name="tamanho" value="25.00" data-name="Individual" checked onchange="updateTotal()">
-                    <div><strong>👤 Individual</strong><br>R$ 25,00</div>
-                </label>
-                <label class="option-card">
-                    <input type="radio" name="tamanho" value="45.00" data-name="Para Dois" onchange="updateTotal()">
-                    <div><strong>👥 Para Dois</strong><br>R$ 45,00</div>
-                </label>
-                <label class="option-card" style="border-color: #ffb74d;">
-                    <input type="checkbox" id="gratinado" value="5.00" onchange="updateTotal()">
-                    <div><strong>🔥 Gratinar com Queijo?</strong><br>+ R$ 5,00</div>
-                </label>
-            </div>
+    <div class="step-content" id="step-2">
+        <h2>2. Tipo de Massa</h2>
+        <label class="option-card"><input type="radio" name="massa" checked value="Espaguete"> Espaguete</label>
+        <label class="option-card"><input type="radio" name="massa" value="Penne"> Penne</label>
+        <label class="option-card"><input type="radio" name="massa" value="Fettuccine"> Fettuccine</label>
+        <label class="option-card"><input type="radio" name="massa" value="Parafuso"> Parafuso</label>
+    </div>
 
-            <div class="step-content" id="step-2">
-                <h2>2. Tipo de Macarrão</h2>
-                <label class="option-card"><input type="radio" name="massa" value="Espaguete 🍝" checked> Espaguete 🍝</label>
-                <label class="option-card"><input type="radio" name="massa" value="Penne 🥢"> Penne 🥢</label>
-                <label class="option-card"><input type="radio" name="massa" value="Fettuccine 🍜"> Fettuccine 🍜</label>
-                <label class="option-card"><input type="radio" name="massa" value="Parafuso 🌀"> Parafuso (Fusilli) 🌀</label>
-            </div>
+    <div class="step-content" id="step-3">
+        <h2>3. Molho</h2>
+        <label class="option-card"><input type="radio" name="molho" checked value="Bolonhesa"> Bolonhesa</label>
+        <label class="option-card"><input type="radio" name="molho" value="Branco"> Branco</label>
+        <label class="option-card"><input type="radio" name="molho" value="4 Queijos"> 4 Queijos</label>
+        <label class="option-card"><input type="radio" name="molho" value="Ao Sugo"> Ao Sugo</label>
+    </div>
 
-            <div class="step-content" id="step-3">
-                <h2>3. Escolha o Molho</h2>
-                <label class="option-card"><input type="radio" name="molho" value="Bolonhesa 🥩" checked> Bolonhesa 🥩</label>
-                <label class="option-card"><input type="radio" name="molho" value="Branco ⚪"> Molho Branco ⚪</label>
-                <label class="option-card"><input type="radio" name="molho" value="4 Queijos 🧀"> Quatro Queijos 🧀</label>
-                <label class="option-card"><input type="radio" name="molho" value="Ao Sugo 🍅"> Ao Sugo (Tomate) 🍅</label>
-            </div>
+    <div class="step-content" id="step-4">
+        <h2>4. Ingredientes</h2>
+        <div class="ing-grid" id="ing-list"></div>
+    </div>
 
-            <div class="step-content" id="step-4">
-                <h2>4. Ingredientes (Opcionais)</h2>
-                <div class="ing-grid" id="ing-list"></div>
-            </div>
+    <div class="step-content" id="step-5">
+        <h2>5. Bebidas</h2>
+        <div id="drinks-list"></div>
+    </div>
 
-            <div class="step-content" id="step-5">
-                <h2>5. Bebidas</h2>
-                <div id="drinks-list">
-                    </div>
-            </div>
-
-            <div class="step-content" id="step-6">
-                <h2>6. Finalizar Pedido</h2>
-                <div class="summary-box">
-                    <div class="summary-item">
-                        <div class="summary-header">Prato Principal <button class="edit-btn" onclick="goToStep(1)">Editar</button></div>
-                        <div class="summary-details" id="res-prato">...</div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="summary-header">Ingredientes <button class="edit-btn" onclick="goToStep(4)">Editar</button></div>
-                        <div class="summary-details" id="res-ing">...</div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="summary-header">Bebidas <button class="edit-btn" onclick="goToStep(5)">Editar</button></div>
-                        <div class="summary-details" id="res-bebidas">...</div>
-                    </div>
-                    
-                    <h3 style="margin-top:20px; text-align:right; border:none;">Total: <span id="res-total" style="color:var(--primary)">R$ 0,00</span></h3>
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <h3>Dados de Entrega</h3>
-                    <input type="text" id="nome" class="input-field" placeholder="Seu Nome Completo">
-                    <input type="text" id="endereco" class="input-field" placeholder="Endereço (Rua, Número)">
-                    <input type="text" id="bairro" class="input-field" placeholder="Bairro">
-                    <input type="text" id="pagamento" class="input-field" placeholder="Forma de Pagamento (Ex: Pix, Dinheiro)">
-                </div>
-            </div>
-
-        </main>
-    </form>
-
-    <footer class="footer-nav">
-        <div id="price-display" style="font-weight:bold; font-size:1.1rem;">R$ 25,00</div>
-        <div>
-            <button class="btn btn-back" id="btn-back" onclick="changeStep(-1)" style="display:none;">Voltar</button>
-            <button class="btn btn-next" id="btn-next" onclick="changeStep(1)">Próximo</button>
-            <button class="btn btn-whatsapp" id="btn-zap" onclick="sendWhatsapp()">Enviar Pedido 📲</button>
+    <div class="step-content" id="step-6">
+        <h2>6. Finalizar</h2>
+        <div style="background:var(--card); padding:15px; border-radius:10px; border:1px solid var(--border); margin-bottom:20px;">
+            <p><strong>Prato:</strong> <span id="res-prato"></span></p>
+            <p><strong>Ingredientes:</strong> <span id="res-ing"></span></p>
+            <p><strong>Bebidas:</strong> <span id="res-bebidas"></span></p>
+            <h3 style="text-align:right; color:var(--primary); margin:10px 0 0 0;">Total: <span id="res-total"></span></h3>
         </div>
-    </footer>
 
-    <script>
-        // CONFIGURAÇÃO INICIAL
-        let currentStep = 1;
-        const totalSteps = 6;
+        <h3>Dados de Entrega</h3>
+        <input id="nome" placeholder="Seu Nome Completo" class="input-field">
+        <input id="endereco" placeholder="Endereço (Rua, Número)" class="input-field">
+        <input id="bairro" placeholder="Bairro" class="input-field">
+        <input id="pagamento" placeholder="Forma de Pagamento (ex: Pix, Dinheiro)" class="input-field">
+    </div>
+
+</main>
+</form>
+
+<footer class="footer-nav">
+    <div id="price-display" style="font-weight:bold; font-size:1.2rem;">R$ 25,00</div>
+    <div>
+        <button class="btn btn-back" id="btn-back" onclick="changeStep(-1)" style="display:none">Voltar</button>
+        <button class="btn btn-next" id="btn-next" onclick="changeStep(1)">Próximo</button>
+        <button class="btn btn-whatsapp" id="btn-zap" onclick="sendWhatsapp()">Enviar Pedido</button>
+    </div>
+</footer>
+
+<script>
+    let currentStep = 1;
+    const totalSteps = 6;
+
+    const ingredientes = ["Bacon", "Frango", "Milho", "Queijo Parmesão", "Calabresa", "Azeitona", "Ervilha", "Tomate"];
+    const bebidas = [
+        {name: "Coca-Cola Lata", price: 6},
+        {name: "Guaraná Lata", price: 6},
+        {name: "Água Mineral", price: 3}
+    ];
+
+    function init() {
+        // Gerar Ingredientes
+        const ing = document.getElementById("ing-list");
+        ingredientes.forEach(i => {
+            ing.innerHTML += `<label class="ing-label"><input type="checkbox" class="ing-check" value="${i}"> ${i}</label>`;
+        });
+
+        // Gerar Bebidas
+        const d = document.getElementById("drinks-list");
+        bebidas.forEach((b, i) => {
+            d.innerHTML += `
+            <div class="drink-item">
+                <div>
+                    <b>${b.name}</b><br>
+                    <small>R$ ${b.price.toFixed(2)}</small>
+                </div>
+                <div class="drink-controls">
+                    <button class="drink-btn" type="button" onclick="changeDrink(${i},-1)">-</button>
+                    <span id="qtd-${i}" class="drink-qty" data-name="${b.name}" data-price="${b.price}">0</span>
+                    <button class="drink-btn" type="button" onclick="changeDrink(${i},1)">+</button>
+                </div>
+            </div>`;
+        });
+        updateTotal();
+    }
+
+    function changeStep(dir) {
+        // Evita erro se tentar ir para passo < 1 ou > 6
+        if ((currentStep === 1 && dir === -1) || (currentStep === totalSteps && dir === 1)) return;
+
+        // Remove classes atuais
+        document.getElementById(`step-${currentStep}`).classList.remove("active");
+        document.getElementById(`dot-${currentStep}`).classList.remove("active");
         
-        const ingredientes = ["Calabresa", "Bacon 🥓", "Alho 🧄", "Cebola", "Frango 🍗", "Presunto", "Milho 🌽", "Azeitona", "Ervilha", "Pimentão", "Parmesão 🧀", "Salsa", "Manjericão", "Tomate 🍅", "Ovo", "Uva Passas", "Champignon 🍄"];
+        // Marca como finalizado se for para frente
+        if (dir === 1) document.getElementById(`dot-${currentStep}`).classList.add("finished");
         
-        const bebidas = [
-            { name: "Coca-Cola Lata", price: 6.00 },
-            { name: "Coca-Cola 1L", price: 10.00 },
-            { name: "Guaraná Lata", price: 6.00 },
-            { name: "Água Mineral", price: 3.00 },
-            { name: "Suco de Laranja", price: 8.00 }
-        ];
+        // Atualiza passo
+        currentStep += dir;
+        
+        // Adiciona classes novas
+        document.getElementById(`step-${currentStep}`).classList.add("active");
+        document.getElementById(`dot-${currentStep}`).classList.add("active");
 
-        // RENDERIZAR ELEMENTOS
-        function init() {
-            // Ingredientes
-            const ingContainer = document.getElementById('ing-list');
-            ingredientes.forEach(i => {
-                ingContainer.innerHTML += `<label class="ing-label"><input type="checkbox" value="${i}" class="ing-check"> ${i}</label>`;
-            });
+        // Controle dos botões (CORREÇÃO: Uso de getElementById)
+        const btnBack = document.getElementById('btn-back');
+        const btnNext = document.getElementById('btn-next');
+        const btnZap = document.getElementById('btn-zap');
+        const priceDisplay = document.getElementById('price-display');
 
-            // Bebidas
-            const drinkContainer = document.getElementById('drinks-list');
-            bebidas.forEach((b, index) => {
-                drinkContainer.innerHTML += `
-                    <div class="drink-item">
-                        <div>
-                            <b>${b.name}</b><br>
-                            <small>R$ ${b.price.toFixed(2)}</small>
-                        </div>
-                        <div class="drink-controls">
-                            <button class="drink-btn" type="button" onclick="changeDrink(${index}, -1)">-</button>
-                            <span id="qtd-${index}" class="drink-qty" data-price="${b.price}" data-name="${b.name}">0</span>
-                            <button class="drink-btn" type="button" onclick="changeDrink(${index}, 1)">+</button>
-                        </div>
-                    </div>`;
-            });
+        btnBack.style.display = currentStep === 1 ? "none" : "inline-block";
+        btnNext.style.display = currentStep === 6 ? "none" : "inline-block";
+        btnZap.style.display = currentStep === 6 ? "inline-block" : "none";
+        priceDisplay.style.display = currentStep === 6 ? "none" : "block";
+
+        if (currentStep === 6) renderSummary();
+        window.scrollTo(0, 0);
+    }
+
+    function changeDrink(i, d) {
+        const el = document.getElementById(`qtd-${i}`);
+        let val = parseInt(el.innerText) + d;
+        if (val < 0) val = 0; // Impede negativo
+        el.innerText = val;
+        updateTotal();
+    }
+
+    function calculateTotal() {
+        let t = parseFloat(document.querySelector('input[name="tamanho"]:checked').value);
+        if (document.getElementById('gratinado').checked) t += 5;
+        
+        document.querySelectorAll('.drink-qty').forEach(e => {
+            t += parseInt(e.innerText) * parseFloat(e.dataset.price);
+        });
+        return t;
+    }
+
+    function updateTotal() {
+        document.getElementById('price-display').innerText = `R$ ${calculateTotal().toFixed(2).replace('.', ',')}`;
+    }
+
+    function renderSummary() {
+        // CORREÇÃO: Pegar todas as infos do prato
+        const tamanhoNome = document.querySelector('input[name="tamanho"]:checked').getAttribute('data-name');
+        const massa = document.querySelector('input[name="massa"]:checked').value;
+        const molho = document.querySelector('input[name="molho"]:checked').value;
+        const grat = document.getElementById('gratinado').checked ? " (Gratinado)" : "";
+
+        // CORREÇÃO: Uso correto de seletores para preencher texto
+        document.getElementById('res-prato').innerText = `${tamanhoNome} - ${massa} ao Molho ${molho}${grat}`;
+        
+        const ings = [...document.querySelectorAll('.ing-check:checked')].map(i => i.value).join(', ');
+        document.getElementById('res-ing').innerText = ings || "Nenhum";
+
+        const drinks = [...document.querySelectorAll('.drink-qty')]
+            .filter(e => parseInt(e.innerText) > 0)
+            .map(e => `${e.innerText}x ${e.dataset.name}`)
+            .join(', ');
+        document.getElementById('res-bebidas').innerText = drinks || "Nenhuma";
+        
+        document.getElementById('res-total').innerText = `R$ ${calculateTotal().toFixed(2).replace('.', ',')}`;
+    }
+
+    function sendWhatsapp() {
+        const nome = document.getElementById("nome").value;
+        const end = document.getElementById("endereco").value;
+        const bairro = document.getElementById("bairro").value;
+        const pag = document.getElementById("pagamento").value;
+
+        if (!nome || !end || !bairro || !pag) {
+            alert("Por favor, preencha todos os dados de entrega.");
+            return;
         }
 
-        // LÓGICA DE NAVEGAÇÃO
-        function changeStep(direction) {
-            document.getElementById(`step-${currentStep}`).classList.remove('active');
-            document.getElementById(`dot-${currentStep}`).classList.remove('active');
-            document.getElementById(`dot-${currentStep}`).classList.add('finished');
-            
-            currentStep += direction;
-            
-            if(currentStep > totalSteps) currentStep = totalSteps;
-            if(currentStep < 1) currentStep = 1;
+        const prato = document.getElementById('res-prato').innerText;
+        const ing = document.getElementById('res-ing').innerText;
+        const beb = document.getElementById('res-bebidas').innerText;
+        const total = calculateTotal().toFixed(2).replace('.', ',');
 
-            document.getElementById(`step-${currentStep}`).classList.add('active');
-            document.getElementById(`dot-${currentStep}`).classList.add('active');
+        const msg = `*NOVO PEDIDO - MOLHO MESTRE* 🍝\n------------------------------\n*CLIENTE:* ${nome}\n*ENDEREÇO:* ${end} - ${bairro}\n*PAGAMENTO:* ${pag}\n------------------------------\n*PRATO:* ${prato}\n*INGREDIENTES:* ${ing}\n*BEBIDAS:* ${beb}\n------------------------------\n*TOTAL: R$ ${total}*`;
+        
+        window.open(`https://wa.me/5586981802347?text=${encodeURIComponent(msg)}`);
+    }
 
-            // Controles dos Botões
-            document.getElementById('btn-back').style.display = currentStep === 1 ? 'none' : 'inline-block';
-            
-            if (currentStep === totalSteps) {
-                document.getElementById('btn-next').style.display = 'none';
-                document.getElementById('btn-zap').style.display = 'inline-block';
-                document.getElementById('price-display').style.display = 'none';
-                renderSummary(); // Atualiza o resumo
-            } else {
-                document.getElementById('btn-next').style.display = 'inline-block';
-                document.getElementById('btn-zap').style.display = 'none';
-                document.getElementById('price-display').style.display = 'block';
-            }
+    function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
+    }
 
-            window.scrollTo(0, 0);
-        }
+    // Iniciar
+    init();
+</script>
 
-        function goToStep(step) {
-            // Reseta para o passo específico (usado no botão Editar)
-            while(currentStep !== step) {
-                changeStep(step > currentStep ? 1 : -1);
-            }
-        }
-
-        // LÓGICA DE BEBIDAS
-        function changeDrink(index, delta) {
-            const span = document.getElementById(`qtd-${index}`);
-            let val = parseInt(span.innerText) + delta;
-            if (val < 0) val = 0;
-            span.innerText = val;
-            updateTotal();
-        }
-
-        // CÁLCULO DE TOTAL
-        function calculateTotalValue() {
-            let total = 0;
-            // Prato
-            const tam = document.querySelector('input[name="tamanho"]:checked');
-            if(tam) total += parseFloat(tam.value);
-            
-            // Gratinado
-            const grat = document.getElementById('gratinado');
-            if(grat.checked) total += parseFloat(grat.value);
-
-            // Bebidas
-            document.querySelectorAll('.drink-qty').forEach(el => {
-                const qtd = parseInt(el.innerText);
-                const price = parseFloat(el.getAttribute('data-price'));
-                total += qtd * price;
-            });
-
-            return total;
-        }
-
-        function updateTotal() {
-            const total = calculateTotalValue();
-            document.getElementById('price-display').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-        }
-
-        // RESUMO E WHATSAPP
-        function renderSummary() {
-            // Dados Prato
-            const tamLabel = document.querySelector('input[name="tamanho"]:checked').getAttribute('data-name');
-            const massa = document.querySelector('input[name="massa"]:checked').value;
-            const molho = document.querySelector('input[name="molho"]:checked').value;
-            const grat = document.getElementById('gratinado').checked ? "SIM (+ R$5,00)" : "Não";
-            
-            document.getElementById('res-prato').innerHTML = 
-                `<b>Tamanho:</b> ${tamLabel}<br>
-                 <b>Massa:</b> ${massa}<br>
-                 <b>Molho:</b> ${molho}<br>
-                 <b>Gratinado:</b> ${grat}`;
-
-            // Dados Ingredientes
-            let ings = [];
-            document.querySelectorAll('.ing-check:checked').forEach(i => ings.push(i.value));
-            document.getElementById('res-ing').innerText = ings.length > 0 ? ings.join(', ') : "Nenhum ingrediente extra";
-
-            // Dados Bebidas
-            let drinks = [];
-            document.querySelectorAll('.drink-qty').forEach(el => {
-                const qtd = parseInt(el.innerText);
-                if(qtd > 0) {
-                    drinks.push(`${qtd}x ${el.getAttribute('data-name')}`);
-                }
-            });
-            document.getElementById('res-bebidas').innerText = drinks.length > 0 ? drinks.join(', ') : "Sem bebidas";
-
-            // Total
-            document.getElementById('res-total').innerText = `R$ ${calculateTotalValue().toFixed(2).replace('.', ',')}`;
-        }
-
-        function sendWhatsapp() {
-            const nome = document.getElementById('nome').value;
-            const end = document.getElementById('endereco').value;
-            const bairro = document.getElementById('bairro').value;
-            const pag = document.getElementById('pagamento').value;
-
-            if(!nome || !end) {
-                alert("Por favor, preencha seu nome e endereço!");
-                return;
-            }
-
-            const total = calculateTotalValue().toFixed(2).replace('.', ',');
-            const pratoTxt = document.getElementById('res-prato').innerText.replace(/<br>/g, '\n');
-            const ingTxt = document.getElementById('res-ing').innerText;
-            const drinkTxt = document.getElementById('res-bebidas').innerText;
-
-            const msg = `*PEDIDO MOLHO MESTRE* 🍝
-------------------------------
-*CLIENTE:* ${nome}
-*LOCAL:* ${end} - ${bairro}
-*PAGAMENTO:* ${pag}
-------------------------------
-*DETALHES DO PEDIDO:*
-${pratoTxt}
-
-*INGREDIENTES:*
-${ingTxt}
-
-*BEBIDAS:*
-${drinkTxt}
-------------------------------
-*TOTAL A PAGAR: R$ ${total}*`;
-
-            const url = `https://wa.me/5586981802347?text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-        }
-
-        // INICIAR
-        init();
-    </script>
 </body>
 </html>
