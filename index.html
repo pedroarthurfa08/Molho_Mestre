@@ -5,91 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Molho Mestre - Massas Italianas</title>
     <style>
+        /* VARIÁVEIS DE CORES */
         :root {
             --primary: #d32f2f; 
             --secondary: #27ae60;
-            --dark: #2c3e50;
             --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #666;
+            --border: #ddd;
+            --input-bg: #fff;
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: var(--bg); margin: 0; padding-bottom: 120px; color: var(--dark); }
+        /* CORES DO MODO ESCURO */
+        body.dark-mode {
+            --bg: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #f8f9fa;
+            --text-muted: #bbb;
+            --border: #333;
+            --input-bg: #2d2d2d;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; transition: background 0.3s, color 0.3s; }
+        body { background-color: var(--bg); margin: 0; padding-bottom: 120px; color: var(--text-main); }
+
+        /* BOTÃO MODO ESCURO */
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            z-index: 100;
+        }
 
         header {
-            background-color: #fff;
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAoHCBYWFRgWFhYZGRgaHBwcGhwaHBocHBwaHBwcGhoaGhgcIS4lHB4rIRoYJjgmKy8xNTU1GiQ7QDs0Py40NTEBDAwMEA8QHhISHjQrJCs0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NP/AABEIALcBEwMBIgACEQEDEQH/xAAcAAABBQEBAQAAAAAAAAAAAAAFAQIDBAYABwj/xAA9EAACAQIEAwYDBwMEAgMBAAABAhEAAwQSITEFQVEGEyJhcYEykbEHFEKhwdHwI1LhYnLxFYKSorLC0hb/xAAZAQADAQEBAAAAAAAAAAAAAAAAAQIDBAX/xAAmEQACAgICAgEEAwEAAAAAAAAAAQIRAyESMQRBIhMyUWEFcYFC/9oADAMBAAIRAxEAPwDzW2lWLFo1LaSr1m3XosoK2bVXrSVKlqp7durSIbFra1L3VSWlqfLVJEtkK2qlW3TgKkWmIiW3UqJTyKeKBCKtPC0q09aAEVKkRKTNSo1AD8lRssVIHpw1oARF0pxFKopWoAaKkSo8tS2xQBJbSpO7pLVSigBnd03u6mpKAIu7pvdirEVGy0CImFVrqVcIqC6tA0Z161Q+7b1rRurVLEJTEZt5Kq91V+4tV7goEZfErfhNef48eI16PxD7prz/HjxGspmkCgx19ajqTHD1qOsjU//Z');
+            background-size: cover;
+            background-position: center;
             text-align: center;
-            padding: 20px;
+            padding: 50px 20px;
             border-bottom: 5px solid var(--primary);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: white;
+            position: relative;
         }
 
-        .logo { font-size: 2rem; margin: 0; text-transform: uppercase; font-weight: 900; }
+        .logo { font-size: 2.2rem; margin: 0; text-transform: uppercase; font-weight: 900; }
         .logo span { color: var(--primary); }
 
-        .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
+        .container { max-width: 600px; margin: -20px auto 20px; padding: 0 15px; position: relative; z-index: 10; }
 
         .card {
-            background: #fff;
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        h3 { border-left: 4px solid var(--primary); padding-left: 10px; margin-top: 0; font-size: 1.1rem; }
+        h3 { border-left: 4px solid var(--primary); padding-left: 10px; margin-top: 0; color: var(--text-main); }
 
-        .option-group { display: flex; flex-direction: column; gap: 12px; }
-        
-        .input-entrega {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            margin-bottom: 10px;
-        }
+        .food-icon { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin-right: 15px; }
 
         .option-item {
             display: flex;
             align-items: center;
             padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
             cursor: pointer;
+            margin-bottom: 10px;
         }
 
-        .option-item input { margin-right: 10px; accent-color: var(--primary); }
-
-        .grid-ingredientes {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+        .input-entrega {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-main);
+            margin-bottom: 10px;
         }
+
+        .grid-ingredientes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
         .ing-label {
             font-size: 0.85rem;
             display: flex;
             align-items: center;
-            background: #f1f1f1;
-            padding: 8px;
-            border-radius: 5px;
-            cursor: pointer;
+            background: var(--bg);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
         }
 
-        .ing-label input { margin-right: 8px; accent-color: var(--secondary); }
-
-        /* Esconder seção de entrega inicialmente */
         #secao-entrega { display: none; border: 2px solid var(--primary); }
 
         .cart-footer {
             position: fixed;
             bottom: 0; left: 0; width: 100%;
-            background: #fff;
+            background: var(--card-bg);
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
             z-index: 1000;
         }
 
@@ -97,36 +123,41 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 15px 20px;
+            padding: 15px 25px;
             border-radius: 50px;
             font-weight: bold;
             cursor: pointer;
         }
 
         .btn-whatsapp { background-color: #25d366; display: none; }
-
-        hr { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
     </style>
 </head>
 <body>
 
     <header>
+        <button class="theme-toggle" onclick="toggleDarkMode()" id="btn-theme">🌙 Modo Escuro</button>
         <h1 class="logo">Molho <span>Mestre</span></h1>
-        <p>Monte seu prato e receba em casa</p>
+        <p>Experiência Italiana Original</p>
     </header>
 
     <main class="container">
         <div id="secao-pedido">
             <section class="card">
                 <h3>1. Escolha o Tamanho</h3>
-                <div class="option-group">
-                    <label class="option-item"><input type="radio" name="tamanho" value="25.00" data-label="1 Pessoa" checked> 1 Pessoa - R$ 25,00</label>
-                    <label class="option-item"><input type="radio" name="tamanho" value="45.00" data-label="2 Pessoas"> 2 Pessoas - R$ 45,00</label>
-                </div>
-                <hr>
-                <label class="option-item" style="border-color: #ffeaa7; background: #fffdf5;">
+                <label class="option-item">
+                    <input type="radio" name="tamanho" value="25.00" data-label="1 Pessoa" checked>
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmH" class="food-icon">
+                    <div><b>1 Pessoa</b><br><small>R$ 25,00</small></div>
+                </label>
+                <label class="option-item">
+                    <input type="radio" name="tamanho" value="45.00" data-label="2 Pessoas">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmH" class="food-icon">
+                    <div><b>2 Pessoas</b><br><small>R$ 45,00</small></div>
+                </label>
+                <label class="option-item" style="background: rgba(211, 47, 47, 0.1);">
                     <input type="checkbox" id="gratinado" value="5.00">
-                    <strong>Gratinar o prato? (+ R$ 5,00)</strong>
+                    <span style="font-size: 1.2rem; margin-right: 10px;">🔥</span>
+                    <div><b>Gratinar?</b><br><small>+ R$ 5,00</small></div>
                 </label>
             </section>
 
@@ -141,71 +172,64 @@
             </section>
 
             <section class="card">
-                <h3>3. Escolha seus Ingredientes</h3>
+                <h3>3. Ingredientes</h3>
                 <div class="grid-ingredientes" id="lista-ingredientes"></div>
             </section>
         </div>
 
         <section class="card" id="secao-entrega">
-            <h3>4. Quase lá! Onde entregamos?</h3>
-            <p style="font-size: 0.9rem; color: #666;">Preencha seus dados para finalizar o pedido no WhatsApp.</p>
-            <input type="text" id="cliente-nome" placeholder="Seu Nome completo" class="input-entrega">
-            <input type="text" id="cliente-end" placeholder="Endereço (Rua e Número)" class="input-entrega">
+            <h3>4. Entrega</h3>
+            <input type="text" id="cliente-nome" placeholder="Seu Nome" class="input-entrega">
+            <input type="text" id="cliente-end" placeholder="Rua e Número" class="input-entrega">
             <input type="text" id="cliente-bairro" placeholder="Bairro" class="input-entrega">
-            <input type="text" id="cliente-ref" placeholder="Ponto de Referência (opcional)" class="input-entrega">
-            <button onclick="voltarParaPedido()" style="background: none; border: none; color: #666; cursor: pointer; text-decoration: underline;">← Voltar e editar pedido</button>
+            <input type="text" id="cliente-ref" placeholder="Referência (Opcional)" class="input-entrega">
+            <button onclick="voltarParaPedido()" style="color: var(--primary); background: none; border:none; cursor:pointer;">← Editar Pedido</button>
         </section>
     </main>
 
     <footer class="cart-footer">
-        <div class="total-box">
-            <span>Total:</span>
-            <strong id="display-total">R$ 25,00</strong>
-        </div>
-        <button id="btn-proximo" class="btn-enviar" onclick="mostrarEntrega()">Avançar para Entrega</button>
-        <button id="btn-zap" class="btn-enviar btn-whatsapp" onclick="enviarWhatsApp()">Finalizar no WhatsApp</button>
+        <div>Total: <br><strong id="display-total">R$ 25,00</strong></div>
+        <button id="btn-proximo" class="btn-enviar" onclick="mostrarEntrega()">Avançar</button>
+        <button id="btn-zap" class="btn-enviar btn-whatsapp" onclick="enviarWhatsApp()">Pedir no WhatsApp</button>
     </footer>
 
     <script>
-        const ingredientes = [
-            "Calabresa picada", "Bacon picada", "Cebola picada", "Alho moído", "Frango desfiado",
-            "Presunto picado", "Milho", "Azeitona", "Ervilha", "Alcaparras", "Pimentão picado",
-            "Queijo parmesão ralado", "Pimenta calabresa", "Salsa", "Manjericão", "Orégano",
-            "Uva passas", "Cenoura picada", "Champion (Cogumelo)", "Tomate picado", "Cheiro verde"
-        ];
+        // DARK MODE LOGIC
+        function toggleDarkMode() {
+            const body = document.body;
+            const btn = document.getElementById('btn-theme');
+            body.classList.toggle('dark-mode');
+            
+            if(body.classList.contains('dark-mode')) {
+                btn.innerHTML = "☀️ Modo Claro";
+            } else {
+                btn.innerHTML = "🌙 Modo Escuro";
+            }
+        }
 
+        // INGREDIENTES
+        const ingredientes = ["Calabresa", "Bacon", "Cebola", "Alho", "Frango", "Presunto", "Milho", "Azeitona", "Ervilha", "Alcaparras", "Pimentão", "Parmesão", "Pimenta", "Salsa", "Manjericão", "Orégano", "Uva Passas", "Cenoura", "Cogumelo", "Tomate", "Cheiro Verde"];
         const grid = document.getElementById('lista-ingredientes');
+
         ingredientes.forEach(item => {
-            const label = document.createElement('label');
-            label.className = 'ing-label';
-            label.innerHTML = `<input type="checkbox" class="ing-check" value="${item}"> ${item}`;
-            grid.appendChild(label);
+            grid.innerHTML += `<label class="ing-label"><input type="checkbox" class="ing-check" value="${item}"> ${item}</label>`;
         });
 
+        // CÁLCULOS
         function calcularTotal() {
-            let total = 0;
-            const tamanhoBase = document.querySelector('input[name="tamanho"]:checked');
-            const gratinadoExtra = document.getElementById('gratinado');
-            total += parseFloat(tamanhoBase.value);
-            if (gratinadoExtra.checked) total += parseFloat(gratinadoExtra.value);
+            let total = parseFloat(document.querySelector('input[name="tamanho"]:checked').value);
+            if (document.getElementById('gratinado').checked) total += 5;
             document.getElementById('display-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
             return total.toFixed(2);
         }
 
         document.addEventListener('change', calcularTotal);
 
-        // FUNÇÕES DE NAVEGAÇÃO
         function mostrarEntrega() {
-            let selecionados = document.querySelectorAll('.ing-check:checked');
-            if(selecionados.length === 0) {
-                alert("Escolha pelo menos um ingrediente antes de avançar!");
-                return;
-            }
             document.getElementById('secao-pedido').style.display = 'none';
             document.getElementById('secao-entrega').style.display = 'block';
             document.getElementById('btn-proximo').style.display = 'none';
             document.getElementById('btn-zap').style.display = 'block';
-            window.scrollTo(0,0);
         }
 
         function voltarParaPedido() {
@@ -216,46 +240,15 @@
         }
 
         function enviarWhatsApp() {
-            const total = calcularTotal();
-            const tamanho = document.querySelector('input[name="tamanho"]:checked').getAttribute('data-label');
-            const molho = document.querySelector('input[name="molho"]:checked').value;
-            const gratinado = document.getElementById('gratinado').checked ? "Sim" : "Não";
-            
             const nome = document.getElementById('cliente-nome').value;
-            const endereco = document.getElementById('cliente-end').value;
-            const bairro = document.getElementById('cliente-bairro').value;
-            const referencia = document.getElementById('cliente-ref').value;
-
-            if (!nome || !endereco || !bairro) {
-                alert("Por favor, preencha Nome, Endereço e Bairro para entrega!");
-                return;
-            }
+            const end = document.getElementById('cliente-end').value;
+            if(!nome || !end) return alert("Preencha os dados de entrega!");
 
             let escolhidos = [];
             document.querySelectorAll('.ing-check:checked').forEach(el => escolhidos.push(el.value));
 
-            const mensagem = encodeURIComponent(
-`*MOLHO MESTRE - NOVO PEDIDO* 🍝
---------------------------------
-*DADOS DE ENTREGA:*
-👤 *Nome:* ${nome}
-📍 *Endereço:* ${endereco}
-🏘️ *Bairro:* ${bairro}
-🔍 *Ref:* ${referencia || 'Não informado'}
---------------------------------
-*DETALHES DO PRATO:*
-📏 *Tamanho:* ${tamanho}
-🍅 *Molho:* ${molho}
-🔥 *Gratinado:* ${gratinado}
-🌿 *Ingredientes:* ${escolhidos.join('\n')}
---------------------------------
-*TOTAL: R$ ${total.replace('.', ',')}*
-
-*CHAVE PIX:* 86981802347 (Pedro Arthur)
-_Envie o comprovante para confirmar._`
-            );
-
-            window.open(`https://wa.me/5586981802347?text=${mensagem}`, '_blank');
+            const msg = encodeURIComponent(`*NOVO PEDIDO - MOLHO MESTRE*\nCliente: ${nome}\nEnd: ${end}\nTotal: R$ ${calcularTotal()}\nIngredientes: ${escolhidos.join(', ')}`);
+            window.open(`https://wa.me/5586981802347?text=${msg}`);
         }
     </script>
 </body>
