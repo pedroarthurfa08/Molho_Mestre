@@ -7,15 +7,15 @@
     <style>
         /* CSS - ESTILIZAÇÃO */
         :root {
-            --primary: #d32f2f; /* Vermelho Italiano */
-            --secondary: #27ae60; /* Verde Manjericão */
+            --primary: #d32f2f; 
+            --secondary: #27ae60;
             --dark: #2c3e50;
             --bg: #f8f9fa;
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-        body { background-color: var(--bg); margin: 0; padding-bottom: 100px; color: var(--dark); }
+        body { background-color: var(--bg); margin: 0; padding-bottom: 120px; color: var(--dark); }
 
         header {
             background-color: #fff;
@@ -38,11 +38,23 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
-        h3 { border-left: 4px solid var(--primary); padding-left: 10px; margin-top: 0; }
+        h3 { border-left: 4px solid var(--primary); padding-left: 10px; margin-top: 0; font-size: 1.1rem; }
 
-        /* Estilo das Opções */
         .option-group { display: flex; flex-direction: column; gap: 12px; }
         
+        /* Inputs de Texto */
+        .input-entrega {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-entrega:focus { border-color: var(--primary); background-color: #fffcfc; }
+
         .option-item {
             display: flex;
             align-items: center;
@@ -50,13 +62,10 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             cursor: pointer;
-            transition: 0.3s;
         }
 
         .option-item input { margin-right: 10px; accent-color: var(--primary); }
-        .option-item:hover { background-color: #fff5f5; border-color: var(--primary); }
 
-        /* Grid de Ingredientes */
         .grid-ingredientes {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -64,7 +73,7 @@
         }
 
         .ing-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             background: #f1f1f1;
@@ -75,7 +84,7 @@
 
         .ing-label input { margin-right: 8px; accent-color: var(--secondary); }
 
-        /* Rodapé do Carrinho */
+        /* Rodapé fixo */
         .cart-footer {
             position: fixed;
             bottom: 0; left: 0; width: 100%;
@@ -88,22 +97,17 @@
             z-index: 1000;
         }
 
-        .total-box span { display: block; font-size: 0.9rem; }
-        .total-box strong { font-size: 1.4rem; color: var(--primary); }
+        .total-box strong { font-size: 1.4rem; color: var(--primary); display: block; }
 
         .btn-enviar {
             background-color: #25d366;
             color: white;
             border: none;
-            padding: 15px 25px;
+            padding: 15px 20px;
             border-radius: 50px;
             font-weight: bold;
-            font-size: 1rem;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
         }
-
-        .btn-enviar:hover { transform: scale(1.05); background-color: #1eb954; }
 
         hr { border: 0; border-top: 1px solid #eee; margin: 15px 0; }
     </style>
@@ -112,7 +116,7 @@
 
     <header>
         <h1 class="logo">Molho <span>Mestre</span></h1>
-        <p>A verdadeira massa italiana em sua casa</p>
+        <p>Monte seu prato e receba em casa</p>
     </header>
 
     <main class="container">
@@ -147,21 +151,29 @@
 
         <section class="card">
             <h3>3. Escolha seus Ingredientes</h3>
-            <div class="grid-ingredientes" id="lista-ingredientes">
-                </div>
+            <div class="grid-ingredientes" id="lista-ingredientes"></div>
+        </section>
+
+        <section class="card">
+            <h3>4. Dados para Entrega</h3>
+            <div class="option-group">
+                <input type="text" id="cliente-nome" placeholder="Seu Nome completo" class="input-entrega">
+                <input type="text" id="cliente-end" placeholder="Endereço (Rua e Número)" class="input-entrega">
+                <input type="text" id="cliente-bairro" placeholder="Bairro" class="input-entrega">
+                <input type="text" id="cliente-ref" placeholder="Ponto de Referência (opcional)" class="input-entrega">
+            </div>
         </section>
     </main>
 
     <footer class="cart-footer">
         <div class="total-box">
-            <span>Total do Pedido:</span>
+            <span>Total:</span>
             <strong id="display-total">R$ 25,00</strong>
         </div>
-        <button class="btn-enviar" onclick="enviarWhatsApp()">Fazer Pedido</button>
+        <button class="btn-enviar" onclick="enviarWhatsApp()">Enviar para WhatsApp</button>
     </footer>
 
     <script>
-        // JAVASCRIPT - LÓGICA
         const ingredientes = [
             "Calabresa picada", "Bacon picada", "Cebola picada", "Alho moído", "Frango desfiado",
             "Presunto picado", "Milho", "Azeitona", "Ervilha", "Alcaparras", "Pimentão picado",
@@ -171,7 +183,6 @@
 
         const grid = document.getElementById('lista-ingredientes');
 
-        // Criar checkboxes de ingredientes
         ingredientes.forEach(item => {
             const label = document.createElement('label');
             label.className = 'ing-label';
@@ -179,39 +190,45 @@
             grid.appendChild(label);
         });
 
-        // Função para calcular total
         function calcularTotal() {
             let total = 0;
             const tamanhoBase = document.querySelector('input[name="tamanho"]:checked');
             const gratinadoExtra = document.getElementById('gratinado');
-
             total += parseFloat(tamanhoBase.value);
             if (gratinadoExtra.checked) total += parseFloat(gratinadoExtra.value);
-
             document.getElementById('display-total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
             return total.toFixed(2);
         }
 
-        // Ouvir mudanças nos campos
         document.addEventListener('change', calcularTotal);
 
-        // Função enviar WhatsApp
         function enviarWhatsApp() {
             const total = calcularTotal();
             const tamanho = document.querySelector('input[name="tamanho"]:checked').getAttribute('data-label');
             const molho = document.querySelector('input[name="molho"]:checked').value;
             const gratinado = document.getElementById('gratinado').checked ? "Sim" : "Não";
             
-            let escolhidos = [];
-            document.querySelectorAll('.ing-check:checked').forEach(el => escolhidos.push(el.value));
+            // Dados de Entrega
+            const nome = document.getElementById('cliente-nome').value;
+            const endereco = document.getElementById('cliente-end').value;
+            const bairro = document.getElementById('cliente-bairro').value;
+            const referencia = document.getElementById('cliente-ref').value;
 
-            if (escolhidos.length === 0) {
-                alert("Por favor, selecione pelo menos um ingrediente!");
+            if (!nome || !endereco || !bairro) {
+                alert("Por favor, preencha Nome, Endereço e Bairro!");
                 return;
             }
 
+            let escolhidos = [];
+            document.querySelectorAll('.ing-check:checked').forEach(el => escolhidos.push(el.value));
+
             const mensagem = encodeURIComponent(
 `*MOLHO MESTRE - NOVO PEDIDO* 🍝
+--------------------------------
+*Cliente:* ${nome}
+*Endereço:* ${endereco}
+*Bairro:* ${bairro}
+*Referência:* ${referencia || 'Não informado'}
 --------------------------------
 *Tamanho:* ${tamanho}
 *Molho:* ${molho}
@@ -221,12 +238,11 @@
 --------------------------------
 *TOTAL: R$ ${total.replace('.', ',')}*
 
-*CHAVE PIX:* 86981802347 (Pedro Arthur)
-_Por favor, envie o comprovante após o pagamento._`
+*CHAVE PIX (CNPJ):* 86981802347
+_Envie o comprovante para confirmar._`
             );
 
-            const telefone = "5586981802347";
-            window.open(`https://wa.me/${telefone}?text=${mensagem}`, '_blank');
+            window.open(`https://wa.me/5586981802347?text=${mensagem}`, '_blank');
         }
     </script>
 </body>
